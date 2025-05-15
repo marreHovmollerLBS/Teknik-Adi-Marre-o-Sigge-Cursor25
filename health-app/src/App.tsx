@@ -681,10 +681,8 @@ function App() {
             },
           }}
         >
-          <Tab label="Hem" />
           <Tab label="Dagbok" />
-          <Tab label="Aktiviteter" />
-          <Tab label="Statistik" />
+          <Tab label="ChatBot" icon={<ChatIcon />} />
           <Tab label="Inställningar" />
         </Tabs>
       </Box>
