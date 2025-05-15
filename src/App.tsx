@@ -23,6 +23,7 @@ import {
   Button,
   Rating,
   TextareaAutosize,
+  Stack,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -116,6 +117,136 @@ interface DiaryEntry {
   notes: string;
 }
 
+interface Translations {
+  sv: {
+    [key: string]: string;
+  };
+  en: {
+    [key: string]: string;
+  };
+}
+
+const translations: Translations = {
+  sv: {
+    appTitle: "Hälsa App",
+    tabHome: "Hem",
+    tabDiary: "Dagbok",
+    tabActivities: "Aktiviteter",
+    tabStatistics: "Statistik",
+    tabSettings: "Inställningar",
+    search: "Sök...",
+    
+    welcomeTitle: "Välkommen till Hälsa App",
+    welcomeText: "Detta är en prototyp av en hälsa-applikation. Här kan du utforska olika funktioner genom att klicka på flikarna ovan.",
+    
+    howAreYouToday: "Hur mår du idag?",
+    todaysNotes: "Dagens anteckningar",
+    notesPlaceholder: "Skriv ner hur din dag har varit...",
+    saveDiaryEntry: "Spara dagboksinlägg",
+    previousEntries: "Tidigare inlägg",
+    
+    statistics: "Statistik",
+    noEntries: "Du har inte loggat några dagboksinlägg än. Börja använda dagboken för att se statistik.",
+    overview: "Översikt",
+    numEntries: "Antal dagboksinlägg",
+    averageMood: "Genomsnittligt mående",
+    mostCommonMood: "Vanligaste humöret",
+    distribution: "Fördelning",
+    trend: "Trend",
+    latestEntries: "De senaste {0} inläggen",
+    
+    settings: "Inställningar",
+    language: "Språk",
+    fontSize: "Textstorlek",
+    colorPalette: "Färgpalett",
+    
+    moodVeryBad: "Mycket dåligt",
+    moodBad: "Dåligt",
+    moodOkay: "Okej",
+    moodGood: "Bra",
+    moodVeryGood: "Mycket bra",
+    
+    customColors: "Anpassa färger",
+    primaryColor: "Primär färg",
+    backgroundColor: "Bakgrundsfärg",
+    paperColor: "Pappersfärg",
+    textColor: "Textfärg",
+    close: "Stäng",
+    
+    paletteDefault: "Standard (Blå)",
+    paletteNature: "Natur (Grön)",
+    paletteOcean: "Hav (Ljusblå)",
+    paletteSunset: "Solnedgång (Orange)",
+    paletteLavender: "Lavendel (Lila)",
+    paletteMidnight: "Midnatt (Mörk)",
+    paletteForest: "Skog (Mörk)",
+    paletteDeepOcean: "Djuphav (Mörk)",
+    paletteCustom: "Anpassad",
+    
+    comingSoon: "Kommer snart",
+    inDevelopment: "Denna funktion är under utveckling."
+  },
+  en: {
+    appTitle: "Health App",
+    tabHome: "Home",
+    tabDiary: "Diary",
+    tabActivities: "Activities",
+    tabStatistics: "Statistics",
+    tabSettings: "Settings",
+    search: "Search...",
+    
+    welcomeTitle: "Welcome to Health App",
+    welcomeText: "This is a prototype of a health application. You can explore different features by clicking on the tabs above.",
+    
+    howAreYouToday: "How are you today?",
+    todaysNotes: "Today's notes",
+    notesPlaceholder: "Write down how your day has been...",
+    saveDiaryEntry: "Save diary entry",
+    previousEntries: "Previous entries",
+    
+    statistics: "Statistics",
+    noEntries: "You haven't logged any diary entries yet. Start using the diary to see statistics.",
+    overview: "Overview",
+    numEntries: "Number of entries",
+    averageMood: "Average mood",
+    mostCommonMood: "Most common mood",
+    distribution: "Distribution",
+    trend: "Trend",
+    latestEntries: "The latest {0} entries",
+    
+    settings: "Settings",
+    language: "Language",
+    fontSize: "Font size",
+    colorPalette: "Color palette",
+    
+    moodVeryBad: "Very bad",
+    moodBad: "Bad",
+    moodOkay: "Okay",
+    moodGood: "Good",
+    moodVeryGood: "Very good",
+    
+    customColors: "Customize colors",
+    primaryColor: "Primary color",
+    backgroundColor: "Background color",
+    paperColor: "Paper color",
+    textColor: "Text color",
+    close: "Close",
+    
+    paletteDefault: "Default (Blue)",
+    paletteNature: "Nature (Green)",
+    paletteOcean: "Ocean (Light blue)",
+    paletteSunset: "Sunset (Orange)",
+    paletteLavender: "Lavender (Purple)",
+    paletteMidnight: "Midnight (Dark)",
+    paletteForest: "Forest (Dark)",
+    paletteDeepOcean: "Deep Ocean (Dark)",
+    paletteCustom: "Custom",
+    
+    comingSoon: "Coming soon",
+    inDevelopment: "This feature is under development."
+  }
+};
+
 function App() {
   const [currentTab, setCurrentTab] = useState(0);
   const [settings, setSettings] = useState<Settings>({
@@ -129,6 +260,11 @@ function App() {
   const [diaryEntries, setDiaryEntries] = useState<DiaryEntry[]>([]);
   const [currentMood, setCurrentMood] = useState<number>(3);
   const [currentNotes, setCurrentNotes] = useState<string>('');
+
+  // Helper function to get translated text
+  const t = (key: string): string => {
+    return translations[settings.language][key] || key;
+  };
 
   // Load diary entries from localStorage on component mount
   useEffect(() => {
@@ -209,26 +345,27 @@ function App() {
     setCurrentNotes('');
   };
 
+  // Custom icons with translated labels
   const customIcons = {
     1: {
       icon: <SentimentVeryDissatisfiedIcon />,
-      label: 'Mycket dåligt',
+      label: t('moodVeryBad'),
     },
     2: {
       icon: <SentimentDissatisfiedIcon />,
-      label: 'Dåligt',
+      label: t('moodBad'),
     },
     3: {
       icon: <SentimentNeutralIcon />,
-      label: 'Okej',
+      label: t('moodOkay'),
     },
     4: {
       icon: <SentimentSatisfiedIcon />,
-      label: 'Bra',
+      label: t('moodGood'),
     },
     5: {
       icon: <SentimentVerySatisfiedIcon />,
-      label: 'Mycket bra',
+      label: t('moodVeryGood'),
     },
   };
 
@@ -237,6 +374,50 @@ function App() {
     return <span {...other}>{customIcons[value].icon}</span>;
   }
 
+  // Enskild ikon för tidigare inlägg - fixa problemet med att alla ikoner visas
+  function SingleIconContainer(props: any) {
+    const { value, ...other } = props;
+    return <span {...other}>{customIcons[value].icon}</span>;
+  }
+
+  // Statistikfunktioner
+  const calculateMoodStats = () => {
+    if (diaryEntries.length === 0) return null;
+
+    // Räkna antal för varje humörnivå
+    const moodCounts = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
+    };
+
+    // Beräkna totalt mående och genomsnitt
+    let totalMood = 0;
+    
+    diaryEntries.forEach(entry => {
+      moodCounts[entry.mood]++;
+      totalMood += entry.mood;
+    });
+
+    const averageMood = totalMood / diaryEntries.length;
+    
+    // Skapa en array med datum och humör för trenddiagram
+    const moodTrend = diaryEntries
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .map(entry => ({
+        date: entry.date,
+        mood: entry.mood
+      }));
+
+    return {
+      counts: moodCounts,
+      average: averageMood,
+      trend: moodTrend
+    };
+  };
+
   const renderColorPicker = () => (
     <Dialog 
       open={isColorPickerOpen} 
@@ -244,11 +425,11 @@ function App() {
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle>Anpassa färger</DialogTitle>
+      <DialogTitle>{t('customColors')}</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
           <Box>
-            <Typography gutterBottom>Primär färg</Typography>
+            <Typography gutterBottom>{t('primaryColor')}</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <input
                 type="color"
@@ -264,7 +445,7 @@ function App() {
             </Box>
           </Box>
           <Box>
-            <Typography gutterBottom>Bakgrundsfärg</Typography>
+            <Typography gutterBottom>{t('backgroundColor')}</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <input
                 type="color"
@@ -280,7 +461,7 @@ function App() {
             </Box>
           </Box>
           <Box>
-            <Typography gutterBottom>Pappersfärg</Typography>
+            <Typography gutterBottom>{t('paperColor')}</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <input
                 type="color"
@@ -296,7 +477,7 @@ function App() {
             </Box>
           </Box>
           <Box>
-            <Typography gutterBottom>Textfärg</Typography>
+            <Typography gutterBottom>{t('textColor')}</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <input
                 type="color"
@@ -314,7 +495,7 @@ function App() {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setIsColorPickerOpen(false)}>Stäng</Button>
+        <Button onClick={() => setIsColorPickerOpen(false)}>{t('close')}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -323,7 +504,7 @@ function App() {
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 3, bgcolor: currentPalette.paper }}>
         <Typography variant="h5" gutterBottom color={currentPalette.text}>
-          Hur mår du idag?
+          {t('howAreYouToday')}
         </Typography>
         
         <Box sx={{ mb: 4 }}>
@@ -352,11 +533,11 @@ function App() {
         </Box>
 
         <Typography variant="h6" gutterBottom color={currentPalette.text}>
-          Dagens anteckningar
+          {t('todaysNotes')}
         </Typography>
         <TextareaAutosize
           minRows={4}
-          placeholder="Skriv ner hur din dag har varit..."
+          placeholder={t('notesPlaceholder')}
           value={currentNotes}
           onChange={(e) => setCurrentNotes(e.target.value)}
           style={{
@@ -378,13 +559,13 @@ function App() {
           sx={{ mt: 2 }}
           color="primary"
         >
-          Spara dagboksinlägg
+          {t('saveDiaryEntry')}
         </Button>
 
         {diaryEntries.length > 0 && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6" gutterBottom color={currentPalette.text}>
-              Tidigare inlägg
+              {t('previousEntries')}
             </Typography>
             {diaryEntries.slice().reverse().map((entry, index) => (
               <Paper
@@ -398,22 +579,16 @@ function App() {
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="subtitle1" color={currentPalette.text}>
-                    {new Date(entry.date).toLocaleDateString('sv-SE')}
+                    {new Date(entry.date).toLocaleDateString(settings.language === 'sv' ? 'sv-SE' : 'en-US')}
                   </Typography>
-                  <Rating
-                    value={entry.mood}
-                    readOnly
-                    max={5}
-                    IconContainerComponent={IconContainer}
-                    sx={{
-                      '& .MuiRating-iconFilled': {
-                        color: currentPalette.primary,
-                      },
-                      '& .MuiRating-iconEmpty': {
-                        color: currentPalette.primary,
-                      },
-                    }}
-                  />
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {customIcons[entry.mood].icon}
+                    <Typography variant="body2" color={currentPalette.text} sx={{ ml: 1 }}>
+                      {settings.language === 'sv' 
+                        ? translations.sv[`mood${getMoodKey(entry.mood)}`] 
+                        : translations.en[`mood${getMoodKey(entry.mood)}`]}
+                    </Typography>
+                  </Box>
                 </Box>
                 <Typography variant="body1" color={currentPalette.text}>
                   {entry.notes}
@@ -426,19 +601,254 @@ function App() {
     </Container>
   );
 
+  // Helper function to get mood key
+  const getMoodKey = (mood: number): string => {
+    switch (mood) {
+      case 1: return 'VeryBad';
+      case 2: return 'Bad';
+      case 3: return 'Okay';
+      case 4: return 'Good';
+      case 5: return 'VeryGood';
+      default: return 'Okay';
+    }
+  };
+
+  const renderStatistics = () => {
+    const stats = calculateMoodStats();
+    
+    if (!stats) {
+      return (
+        <Container maxWidth="md" sx={{ mt: 4 }}>
+          <Paper elevation={3} sx={{ p: 3, bgcolor: currentPalette.paper }}>
+            <Typography variant="h5" gutterBottom color={currentPalette.text}>
+              {t('statistics')}
+            </Typography>
+            <Typography variant="body1" color={currentPalette.text}>
+              {t('noEntries')}
+            </Typography>
+          </Paper>
+        </Container>
+      );
+    }
+
+    // Hitta det vanligaste humöret
+    let mostCommonMood = 1;
+    let maxCount = 0;
+    
+    Object.entries(stats.counts).forEach(([mood, count]) => {
+      if (Number(count) > maxCount) {
+        mostCommonMood = Number(mood);
+        maxCount = Number(count);
+      }
+    });
+
+    return (
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Paper elevation={3} sx={{ p: 3, bgcolor: currentPalette.paper }}>
+          <Typography variant="h5" gutterBottom color={currentPalette.text}>
+            {t('statistics')}
+          </Typography>
+          
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h6" gutterBottom color={currentPalette.text}>
+              {t('overview')}
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography variant="body1" color={currentPalette.text}>
+                {t('numEntries')}: {diaryEntries.length}
+              </Typography>
+              <Typography variant="body1" color={currentPalette.text}>
+                {t('averageMood')}: {stats.average.toFixed(1)} / 5
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="body1" color={currentPalette.text} sx={{ mr: 1 }}>
+                  {t('mostCommonMood')}:
+                </Typography>
+                {customIcons[mostCommonMood].icon}
+                <Typography variant="body1" color={currentPalette.text} sx={{ ml: 1 }}>
+                  {customIcons[mostCommonMood].label}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+          
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h6" gutterBottom color={currentPalette.text}>
+              {t('distribution')}
+            </Typography>
+            <Stack spacing={1} direction="column">
+              {Object.entries(stats.counts).map(([mood, count]) => (
+                <Box key={mood} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ width: 150, display: 'flex', alignItems: 'center' }}>
+                    {customIcons[Number(mood)].icon}
+                    <Typography variant="body2" color={currentPalette.text} sx={{ ml: 1 }}>
+                      {customIcons[Number(mood)].label}:
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      height: 24,
+                      bgcolor: currentPalette.primary,
+                      borderRadius: 1,
+                      width: `${(Number(count) / diaryEntries.length) * 100}%`,
+                      minWidth: 20,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mr: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: 'white',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      {Number(count)}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" color={currentPalette.text}>
+                    {((Number(count) / diaryEntries.length) * 100).toFixed(0)}%
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
+          </Box>
+          
+          <Box>
+            <Typography variant="h6" gutterBottom color={currentPalette.text}>
+              {t('trend')}
+            </Typography>
+            <Typography variant="body2" color={currentPalette.text} sx={{ mb: 2 }}>
+              {t('latestEntries').replace('{0}', Math.min(7, stats.trend.length).toString())}
+            </Typography>
+            <Box sx={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between', 
+              p: 2,
+              bgcolor: currentPalette.background,
+              borderRadius: 1,
+              height: 180,
+              position: 'relative',
+            }}>
+              {/* Horisontella linjer för skala */}
+              {[1, 2, 3, 4, 5].map(level => (
+                <Box
+                  key={level}
+                  sx={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    bottom: `${(level - 1) * 20}%`,
+                    borderBottom: level === 1 ? `2px solid ${currentPalette.text}` : `1px dashed ${currentPalette.text}`,
+                    opacity: level === 1 ? 1 : 0.3,
+                    zIndex: 1,
+                  }}
+                />
+              ))}
+              
+              {/* Humörtrendlinje */}
+              {stats.trend.slice(-7).map((entry, index, array) => {
+                if (index === 0) return null;
+                
+                const previousEntry = array[index - 1];
+                const normalizedX1 = (index - 1) / (array.length - 1);
+                const normalizedX2 = index / (array.length - 1);
+                const normalizedY1 = (previousEntry.mood - 1) / 4;
+                const normalizedY2 = (entry.mood - 1) / 4;
+                
+                return (
+                  <React.Fragment key={entry.date}>
+                    {/* Linje mellan punkter */}
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        left: `calc(${normalizedX1 * 100}%)`,
+                        bottom: `calc(${normalizedY1 * 100}%)`,
+                        width: `${((normalizedX2 - normalizedX1) * 100)}%`,
+                        height: `${Math.abs((normalizedY2 - normalizedY1) * 100)}%`,
+                        borderBottom: normalizedY2 >= normalizedY1 ? 'none' : `2px solid ${currentPalette.primary}`,
+                        borderTop: normalizedY2 >= normalizedY1 ? `2px solid ${currentPalette.primary}` : 'none',
+                        transformOrigin: 'bottom left',
+                        transform: `rotate(${Math.atan2((normalizedY2 - normalizedY1) * 100, (normalizedX2 - normalizedX1) * 100)}rad)`,
+                        zIndex: 2,
+                      }}
+                    />
+                  </React.Fragment>
+                );
+              })}
+              
+              {/* Humörpunkter */}
+              {stats.trend.slice(-7).map((entry, index, array) => {
+                const normalizedX = index / (array.length - 1);
+                const normalizedY = (entry.mood - 1) / 4;
+                
+                return (
+                  <Box
+                    key={entry.date}
+                    sx={{
+                      position: 'absolute',
+                      left: `calc(${normalizedX * 100}% - 10px)`,
+                      bottom: `calc(${normalizedY * 100}% - 10px)`,
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      bgcolor: currentPalette.primary,
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      zIndex: 3,
+                    }}
+                  >
+                    {entry.mood}
+                  </Box>
+                );
+              })}
+              
+              {/* Datum under grafen */}
+              {stats.trend.slice(-7).map((entry, index, array) => {
+                const normalizedX = index / (array.length - 1);
+                
+                return (
+                  <Typography
+                    key={entry.date}
+                    variant="caption"
+                    color={currentPalette.text}
+                    sx={{
+                      position: 'absolute',
+                      left: `calc(${normalizedX * 100}% - 20px)`,
+                      bottom: -30,
+                      width: 40,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {new Date(entry.date).toLocaleDateString('sv-SE', { day: 'numeric', month: 'numeric' })}
+                  </Typography>
+                );
+              })}
+            </Box>
+          </Box>
+        </Paper>
+      </Container>
+    );
+  };
+
   const renderSettings = () => (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Paper elevation={3} sx={{ p: 3, bgcolor: currentPalette.paper }}>
         <Typography variant="h5" gutterBottom color={currentPalette.text}>
-          Inställningar
+          {t('settings')}
         </Typography>
         
         <Box sx={{ mb: 4 }}>
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Språk</InputLabel>
+            <InputLabel>{t('language')}</InputLabel>
             <Select
               value={settings.language}
-              label="Språk"
+              label={t('language')}
               onChange={(e) => handleSettingChange('language', e.target.value)}
             >
               <MenuItem value="sv">Svenska</MenuItem>
@@ -448,7 +858,7 @@ function App() {
 
           <Box sx={{ mb: 2 }}>
             <Typography gutterBottom color={currentPalette.text}>
-              Textstorlek: {settings.fontSize}px
+              {t('fontSize')}: {settings.fontSize}px
             </Typography>
             <Slider
               value={settings.fontSize}
@@ -473,21 +883,21 @@ function App() {
           </Box>
 
           <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel>Färgpalett</InputLabel>
+            <InputLabel>{t('colorPalette')}</InputLabel>
             <Select
               value={settings.colorPalette}
-              label="Färgpalett"
+              label={t('colorPalette')}
               onChange={(e) => handleSettingChange('colorPalette', e.target.value)}
             >
-              <MenuItem value="default">Standard (Blå)</MenuItem>
-              <MenuItem value="nature">Natur (Grön)</MenuItem>
-              <MenuItem value="ocean">Hav (Ljusblå)</MenuItem>
-              <MenuItem value="sunset">Solnedgång (Orange)</MenuItem>
-              <MenuItem value="lavender">Lavendel (Lila)</MenuItem>
-              <MenuItem value="midnight">Midnatt (Mörk)</MenuItem>
-              <MenuItem value="forest">Skog (Mörk)</MenuItem>
-              <MenuItem value="deepOcean">Djuphav (Mörk)</MenuItem>
-              <MenuItem value="custom">Anpassad</MenuItem>
+              <MenuItem value="default">{t('paletteDefault')}</MenuItem>
+              <MenuItem value="nature">{t('paletteNature')}</MenuItem>
+              <MenuItem value="ocean">{t('paletteOcean')}</MenuItem>
+              <MenuItem value="sunset">{t('paletteSunset')}</MenuItem>
+              <MenuItem value="lavender">{t('paletteLavender')}</MenuItem>
+              <MenuItem value="midnight">{t('paletteMidnight')}</MenuItem>
+              <MenuItem value="forest">{t('paletteForest')}</MenuItem>
+              <MenuItem value="deepOcean">{t('paletteDeepOcean')}</MenuItem>
+              <MenuItem value="custom">{t('paletteCustom')}</MenuItem>
             </Select>
           </FormControl>
 
@@ -498,7 +908,7 @@ function App() {
               onClick={() => setIsColorPickerOpen(true)}
               sx={{ mt: 2 }}
             >
-              Anpassa färger
+              {t('customColors')}
             </Button>
           )}
         </Box>
@@ -518,20 +928,22 @@ function App() {
                 color={currentPalette.text}
                 sx={{ fontSize: '1.5rem' }}
               >
-                Välkommen till Hälsa App
+                {t('welcomeTitle')}
               </Typography>
               <Typography 
                 variant="body1" 
                 color={currentPalette.text}
                 sx={{ fontSize: '1rem' }}
               >
-                Detta är en prototyp av en hälsa-applikation. Här kan du utforska olika funktioner genom att klicka på flikarna ovan.
+                {t('welcomeText')}
               </Typography>
             </Paper>
           </Container>
         );
       case 1:
         return renderDiary();
+      case 3:
+        return renderStatistics();
       case 4:
         return renderSettings();
       default:
@@ -544,14 +956,14 @@ function App() {
                 color={currentPalette.text}
                 sx={{ fontSize: '1.5rem' }}
               >
-                Kommer snart
+                {t('comingSoon')}
               </Typography>
               <Typography 
                 variant="body1" 
                 color={currentPalette.text}
                 sx={{ fontSize: '1rem' }}
               >
-                Denna funktion är under utveckling.
+                {t('inDevelopment')}
               </Typography>
             </Paper>
           </Container>
@@ -577,11 +989,11 @@ function App() {
               fontSize: '1.25rem',
             }}
           >
-            Hälsa App
+            {t('appTitle')}
           </Typography>
           <TextField
             size="small"
-            placeholder="Sök..."
+            placeholder={t('search')}
             sx={{
               backgroundColor: 'white',
               borderRadius: 1,
@@ -635,11 +1047,11 @@ function App() {
             },
           }}
         >
-          <Tab label="Hem" />
-          <Tab label="Dagbok" />
-          <Tab label="Aktiviteter" />
-          <Tab label="Statistik" />
-          <Tab label="Inställningar" />
+          <Tab label={t('tabHome')} />
+          <Tab label={t('tabDiary')} />
+          <Tab label={t('tabActivities')} />
+          <Tab label={t('tabStatistics')} />
+          <Tab label={t('tabSettings')} />
         </Tabs>
       </Box>
 
