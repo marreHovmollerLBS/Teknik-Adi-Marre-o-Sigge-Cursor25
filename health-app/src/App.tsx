@@ -33,6 +33,7 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import ChatIcon from '@mui/icons-material/Chat';
 
 interface Settings {
   language: string;
@@ -115,6 +116,91 @@ interface DiaryEntry {
   mood: number;
   notes: string;
 }
+
+// Add ChatBot component
+const ChatBot = () => {
+  const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([
+    { text: 'Hej! Hur kan jag hjälpa dig idag?', isUser: false }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+
+  const sendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    // Add user message
+    setMessages(prev => [...prev, { text: inputMessage, isUser: true }]);
+
+    try {
+      const response = await fetch('http://localhost:3000/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: inputMessage }),
+      });
+
+      const data = await response.json();
+      
+      // Add bot response
+      setMessages(prev => [...prev, { text: data.reply, isUser: false }]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages(prev => [...prev, { text: 'Sorry, something went wrong. Please try again.', isUser: false }]);
+    }
+
+    setInputMessage('');
+  };
+
+  return (
+    <Box sx={{ height: '80vh', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          flex: 1, 
+          p: 2, 
+          overflow: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1
+        }}
+      >
+        {messages.map((msg, index) => (
+          <Box
+            key={index}
+            sx={{
+              alignSelf: msg.isUser ? 'flex-end' : 'flex-start',
+              backgroundColor: msg.isUser ? 'primary.main' : 'grey.100',
+              color: msg.isUser ? 'white' : 'text.primary',
+              p: 1,
+              px: 2,
+              borderRadius: 2,
+              maxWidth: '70%'
+            }}
+          >
+            <Typography>{msg.text}</Typography>
+          </Box>
+        ))}
+      </Paper>
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <TextField
+          fullWidth
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+          placeholder="Skriv ditt meddelande här..."
+          variant="outlined"
+        />
+        <Button 
+          variant="contained" 
+          onClick={sendMessage}
+          disabled={!inputMessage.trim()}
+        >
+          Skicka
+        </Button>
+      </Box>
+    </Box>
+  );
+};
 
 function App() {
   const [currentTab, setCurrentTab] = useState(0);
@@ -509,53 +595,13 @@ function App() {
   const renderContent = () => {
     switch (currentTab) {
       case 0:
-        return (
-          <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Paper elevation={3} sx={{ p: 3, bgcolor: currentPalette.paper }}>
-              <Typography 
-                variant="h5" 
-                gutterBottom 
-                color={currentPalette.text}
-                sx={{ fontSize: '1.5rem' }}
-              >
-                Välkommen till Hälsa App
-              </Typography>
-              <Typography 
-                variant="body1" 
-                color={currentPalette.text}
-                sx={{ fontSize: '1rem' }}
-              >
-                Detta är en prototyp av en hälsa-applikation. Här kan du utforska olika funktioner genom att klicka på flikarna ovan.
-              </Typography>
-            </Paper>
-          </Container>
-        );
-      case 1:
         return renderDiary();
-      case 4:
+      case 1:
+        return <ChatBot />;
+      case 2:
         return renderSettings();
       default:
-        return (
-          <Container maxWidth="lg" sx={{ mt: 4 }}>
-            <Paper elevation={3} sx={{ p: 3, bgcolor: currentPalette.paper }}>
-              <Typography 
-                variant="h5" 
-                gutterBottom 
-                color={currentPalette.text}
-                sx={{ fontSize: '1.5rem' }}
-              >
-                Kommer snart
-              </Typography>
-              <Typography 
-                variant="body1" 
-                color={currentPalette.text}
-                sx={{ fontSize: '1rem' }}
-              >
-                Denna funktion är under utveckling.
-              </Typography>
-            </Paper>
-          </Container>
-        );
+        return renderDiary();
     }
   };
 
