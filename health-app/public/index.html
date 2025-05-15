@@ -1,47 +1,265 @@
 <!DOCTYPE html>
+<!-- 
+==============================================
+MAIN ENTRY POINT - START HERE
+==============================================
+File: health-app/public/index.html
+Description: Main entry point for Hälsa App
+How to run:
+1. Open terminal in health-app folder
+2. Type: npm start
+3. Open browser: http://localhost:3001
+==============================================
+-->
 <html lang="sv">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hälsa App - Din Digitala Hälsoassistent</title>
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="description" content="En hälsoapp med dagbok och AI-chatbot" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
+    <title>Hälsoappen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+        .tab.active {
+            border-bottom: 2px solid #007bff;
+            color: #007bff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chat-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .message.bot {
+            background-color: #f0f0f0;
+        }
+        .message.user {
+            background-color: #007bff;
+            color: white;
+            margin-left: 20%;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .chat-input button {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+        .mood-tracker {
+            margin-top: 20px;
+        }
+        .mood-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .mood-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+        }
+        .mood-button:hover {
+            background-color: #e0e0e0;
+        }
+        .mood-notes {
+            margin-top: 20px;
+        }
+        .mood-notes textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+    </style>
   </head>
   <body>
-    <noscript>Du måste aktivera JavaScript för att köra denna app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <div class="container">
+        <h1>Välkommen till Hälsoappen!</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('dagbok')">Dagbok</button>
+            <button class="tab" onclick="openTab('chatbot')">ChatBot</button>
+            <button class="tab" onclick="openTab('installningar')">Inställningar</button>
+        </div>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        <!-- Dagbok Tab -->
+        <div id="dagbok" class="tab-content active">
+            <h2>Min Hälsodagbok</h2>
+            <div class="mood-tracker">
+                <h3>Hur mår du idag?</h3>
+                <div class="mood-buttons">
+                    <button class="mood-button">😊 Mycket bra</button>
+                    <button class="mood-button">🙂 Bra</button>
+                    <button class="mood-button">😐 Okej</button>
+                    <button class="mood-button">🙁 Mindre bra</button>
+                    <button class="mood-button">😢 Dåligt</button>
+                </div>
+                <div class="mood-notes">
+                    <h3>Anteckningar</h3>
+                    <textarea placeholder="Skriv dina tankar här..."></textarea>
+                </div>
+            </div>
+        </div>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-    <!-- 
-        Hälsa App - Main Entry Point
-        Version: 1.0.0
-        Features:
-        - Dagbok för humör och anteckningar
-        - AI Chatbot för hälsofrågor
-        - Anpassningsbara inställningar
-    -->
+        <!-- ChatBot Tab -->
+        <div id="chatbot" class="tab-content">
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot">
+                        Hej! Hur kan jag hjälpa dig idag?
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="Skriv ditt meddelande...">
+                    <button id="send-button">Skicka</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inställningar Tab -->
+        <div id="installningar" class="tab-content">
+            <h2>Inställningar</h2>
+            <div class="settings-container">
+                <h3>Anpassa din app</h3>
+                <div class="setting-item">
+                    <label>Textstorlek:</label>
+                    <select id="font-size">
+                        <option value="small">Liten</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Stor</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Språk:</label>
+                    <select id="language">
+                        <option value="sv" selected>Svenska</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let content of tabContents) {
+                content.classList.remove('active');
+            }
+            
+            // Remove active class from all tabs
+            const tabs = document.getElementsByClassName('tab');
+            for (let tab of tabs) {
+                tab.classList.remove('active');
+            }
+            
+            // Show the selected tab content and mark tab as active
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // ChatBot functionality
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Add user message
+                addMessage(message, 'user');
+                
+                // Clear input
+                input.value = '';
+                
+                // Simulate bot response (replace with actual API call)
+                setTimeout(() => {
+                    addMessage('Tack för ditt meddelande! Jag arbetar på en respons.', 'bot');
+                }, 1000);
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Save mood and notes functionality
+        document.querySelectorAll('.mood-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active state from all buttons
+                document.querySelectorAll('.mood-button').forEach(btn => {
+                    btn.style.backgroundColor = '#f0f0f0';
+                });
+                // Set active state for clicked button
+                this.style.backgroundColor = '#007bff';
+                this.style.color = 'white';
+            });
+        });
+    </script>
   </body>
 </html>
